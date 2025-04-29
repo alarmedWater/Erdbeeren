@@ -1,0 +1,7 @@
+# /home/parallels/Documents/Forschsem/Erdbeeren_yolo/Riseholme/Riseholme-2021/data.yaml
+path: /home/parallels/Documents/Forschsem/Erdbeeren_yolo/Riseholme/Riseholme-2021
+train: images/train
+val:   images/val
+
+nc: 1
+names: ['ripe']
