@@ -1,0 +1,37 @@
+from pathlib import Path
+
+def find_parent_folder(name_substring: str, start: Path = Path.cwd()) -> Path:
+    """
+    Durchsucht start und alle übergeordneten Verzeichnisse nach einem Ordner,
+    dessen Name name_substring enthält (case-insensitive).
+    """
+    for p in [start] + list(start.parents):
+        if name_substring.lower() in p.name.lower():
+            return p
+    raise FileNotFoundError(f"Ordner mit '{name_substring}' im Namen nicht gefunden (Beginn: {start})")
+
+# Suche das Projekt-Root anhand des Ordnernamens (z.B. "Riseholme" oder "Riseholme-2021")
+PROJECT_KEYWORD = "riseholme"
+BASE_DIR = find_parent_folder(PROJECT_KEYWORD)
+print(f"✅ Basis-Verzeichnis gefunden: {BASE_DIR}")
+
+# Jetzt kannst du wie gewohnt weitermachen:
+image_dir = BASE_DIR / 'Data' / 'Normal' / 'Ripe'
+label_dir = BASE_DIR / 'labels' / 'Ripe'
+
+if not image_dir.is_dir():
+    raise FileNotFoundError(f"{image_dir} existiert nicht")
+
+label_dir.mkdir(parents=True, exist_ok=True)
+
+class_id = 0  # Klasse 0 = "ripe"
+count = 0
+
+for img_path in image_dir.iterdir():
+    if img_path.suffix.lower() in {'.jpg', '.jpeg', '.png'}:
+        txt_path = label_dir / f"{img_path.stem}.txt"
+        with open(txt_path, 'w') as f:
+            f.write(f"{class_id} 0.5 0.5 1.0 1.0\n")
+        count += 1
+
+print(f"✅ {count} Labels erstellt in {label_dir}")
